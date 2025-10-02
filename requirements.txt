@@ -1,0 +1,9 @@
+# Core ML and deployment requirements for Chest X-Ray Classification with Grad-CAM and Streamlit
+streamlit
+pillow
+torch
+torchvision
+numpy
+matplotlib
+scikit-learn
+opencv-python
