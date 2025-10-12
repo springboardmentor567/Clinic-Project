@@ -1,4 +1,4 @@
-# Lung Detection – Streamlit-Based Pneumonia Classification App
+# [Lung Detection – Streamlit-Based Pneumonia Classification App](https://infosys-project-awctidx2cpngvabdrxdq8k.streamlit.app/)
 
 This project focuses on detecting **Pneumonia** from chest X-ray images using a **ResNet18 convolutional neural network** integrated with a **Streamlit web interface**. The application supports both single and batch image inference and provides Grad-CAM visualizations for interpretability.
 
@@ -69,4 +69,5 @@ python train.py
 ```
 - Dataset must be placed in the path `data/Images/{train,val,test}/{NORMAL,PNEUMONIA}`.
 - Hyperparameters such as learning rate, epochs, or device can be adjusted within `train.py`.
+
 
