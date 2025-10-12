@@ -203,7 +203,7 @@ if uploaded_file:
         'The area highlighted in <b style="color:#d63031">red/yellow</b> below visually identifies the most suspicious region the model focused on. This is the likely location of the pneumonia.'
         '</div>', unsafe_allow_html=True
     )
-
+    # --------------------detection--------------------
     cam = generate_gradcam(model, img_tensor, pred_tensor)
     heatmap = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
     img_np = np.array(image.resize((224, 224)))
