@@ -105,8 +105,4 @@ The **`app.py`** script serves as the unified interface, using Streamlit Tabs to
 
 The application uses tabs to cleanly separate the two functionalities. These images illustrate the Object Detection tab (YOLOv8):
 
-| Description | Snapshot |
-| :--- | :--- |
-| **Application Welcome Page** | ![CliniScan-YOLOv8_page-0001](https://github.com/user-attachments/assets/88ab5ba5-0ccb-4ec5-af0b-917c70f48bcf) |
-| **Image Upload Interface** | ![CliniScan-YOLOv8_page-0002](https://github.com/user-attachments/assets/b373281b-0a37-4a0e-89b9-1c4080052335) |
-| **Inference Result (Image with Bounding Boxes)** | ![CliniScan-YOLOv8_page-0003](https://github.com/user-attachments/assets/f073d84a-62f8-4e6a-8001-d89549657b8f) |
+
