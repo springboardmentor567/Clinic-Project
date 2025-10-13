@@ -1,100 +1,103 @@
-# 🩺 LungScan AI: Automated Chest X-Ray Abnormality Detection
+# CliniScan AI: AI-Powered Lung Abnormality Detection
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://infosys-project-awctidx2cpngvabdrxdq8k.streamlit.app/)
+An end-to-end deep learning portfolio project demonstrating a complete pipeline for detecting and classifying abnormalities in chest X-ray images, built with Python, YOLOv8, TensorFlow, and deployed as an interactive web application with Streamlit.
 
-LungScan AI is an end-to-end deep learning application for detecting and localizing abnormalities in chest X-rays using advanced CNN and object detection models.  
-Built with **Python**, **PyTorch**, and **Streamlit**, it provides an intuitive interface for exploring AI-driven medical image analysis.
+## Live Demonstration
 
----
+The application is deployed and publicly accessible. Click the link below to interact with the live app:
 
-## 🎥 Live Demonstration
+[Open in Streamlit](https://infosys-project-awctidx2cpngvabdrxdq8k.streamlit.app/)
 
-**CliniScan Demo Video:** A complete walkthrough of the application’s features, workflow, and results.  
-📺 *Watch the video below once uploaded.*
+(Placeholder for screenshot of the app homepage - add your photo here)
 
-🔗 [**Open Live Application Here →**](https://infosys-project-awctidx2cpngvabdrxdq8k.streamlit.app/)
+(Placeholder for video walkthrough - add your video here demonstrating the app's features and functionality)
 
----
+## Table of Contents
 
-## 🧠 About the Project
+- [About The Project](#about-the-project)
+- [Key Features](#key-features)
+- [Methodology: The AI Pipeline](#methodology-the-ai-pipeline)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Setup Instructions](#setup-instructions)
+- [Development Milestones](#development-milestones)
 
-LungScan AI demonstrates the integration of deep learning in medical image processing through classification, detection, and interpretability techniques.  
-The goal is to showcase a streamlined AI workflow — from data preprocessing to final model deployment — in an interactive and visually interpretable form.
+## About The Project
 
----
+CliniScan AI is a proof-of-concept platform designed to showcase the power of deep learning in medical imaging. The primary goal is to provide an intuitive tool that assists in the analysis of chest radiographs by identifying and localizing potential pathological findings.
 
-## ✨ Key Features
+This project was developed to tackle the challenges of working with complex medical data and to build a full-stack AI application from data collection to final deployment.
 
-- **Dual-Model Workflow:** Classification (ResNet-50) + Detection (YOLOv8).  
-- **Interactive Dashboard:** Upload, analyze, and visualize results in real-time.  
-- **Grad-CAM Heatmaps:** Highlight important regions influencing model predictions.  
-- **Performance Metrics:** Evaluate model accuracy and detection quality.  
-- **Streamlit Deployment:** Lightweight and fully hosted web interface.
+This tool is for educational and demonstration purposes only and is not a certified medical device intended for real-world diagnostic use.
 
----
+## Key Features
 
-## 🧩 Methodology: AI Pipeline
+- **Dual-Model System:** Utilizes two distinct AI models for a comprehensive, two-stage analysis.
+- **Interactive Web Interface:** A user-friendly application built with Streamlit that allows for easy image upload and analysis.
+- **Explainable AI:** Incorporates Grad-CAM visualizations to provide insights into the classification model's decision-making process.
+- **Flexible Detection:** Allows users to switch between a general single-class detector and a more specific multi-class detector to compare results.
+- **Performance Dashboard:** A dedicated page to display and review the performance metrics (like Confusion Matrices and training data) for all integrated models.
+- **Downloadable Reports:** Users can download a text-based summary of the analysis for any given X-ray.
 
-The project follows a **three-stage process**:
+## Methodology: The AI Pipeline
 
-1. **Classification:**  
-   A **ResNet-50** model identifies whether the X-ray is *Normal* or *Abnormal*.  
+The application uses a sequential, two-stage process for analysis:
 
-2. **Detection:**  
-   If *Abnormal*, a **YOLOv8** detector localizes suspicious regions (bounding boxes).  
+1. **Classification:** A ResNet50-based Convolutional Neural Network (CNN) first analyzes the entire image to determine if it is 'Normal' or 'Abnormal'. This acts as an initial, high-level screening.
+2. **Detection:** If the image is deemed 'Abnormal', a YOLOv8 object detection model is then used to draw bounding boxes around the specific regions of interest that it identifies as potential abnormalities.
+3. **Visualization:** For all 'Abnormal' classifications, a Grad-CAM (Gradient-weighted Class Activation Mapping) heatmap is generated. This visualization highlights the pixels the classification model focused on most, providing insight into its decision-making process.
 
-3. **Visualization:**  
-   **Grad-CAM** overlays visualize where the model focused during prediction.
+## Technology Stack
 
----
+- **Backend & Web Framework:** Python, Streamlit
+- **Object Detection:** PyTorch, Ultralytics YOLOv8
+- **Classification:** TensorFlow, Keras (ResNet50)
+- **Data Handling & Image Processing:** Pandas, NumPy, OpenCV, Pillow
+- **Deployment:** Streamlit Community Cloud
+- **Version Control:** Git & GitHub (with Git LFS for large model handling)
 
-## ⚙️ Technology Stack
+## Project Structure
 
-| Layer | Tools |
-|-------|-------|
-| **Frameworks** | Python, Streamlit |
-| **Deep Learning** | PyTorch, Ultralytics YOLOv8 |
-| **Classification Model** | ResNet-50 |
-| **Data Handling** | Pandas, NumPy, OpenCV, Pillow |
-| **Visualization** | Matplotlib, Grad-CAM |
-| **Deployment** | Streamlit Community Cloud |
-| **Version Control** | Git + GitHub |
-
----
-
-## 🗂️ Project Structure
-
+```
 lung_detection/
-│
-├── streamlit_app.py # Main Streamlit UI script
-├── /models/ # Trained YOLOv8 / ResNet weights
-├── /src/ # Helper modules and utility functions
-├── /data/ # Processed dataset or samples
-├── /assets/ # Images, Grad-CAMs, screenshots
-├── /scripts/ # Model training and annotation conversion
-├── requirements.txt # Dependencies
-└── .streamlit/config.toml # App theme configuration
+├── streamlit_app.py        # Main Streamlit UI script
+├── models/                 # Trained YOLOv8 / ResNet weights
+├── src/                    # Helper modules and utility functions
+├── data/                   # Processed dataset or samples
+├── assets/                 # Images, Grad-CAMs, screenshots
+├── scripts/                # Model training and annotation conversion
+├── requirements.txt        # Dependencies
+└── streamlit/config.toml   # App theme configuration
+```
 
----
+## Setup Instructions
 
+Clone the repository:
 
-
----
-
-## ⚙️ Setup Instructions
-
-### Clone the repository
-```bash
+```
 git clone https://github.com/Ektajoge55/lung_detection.git
 cd lung_detection
+```
+
+Install dependencies (preferably in a virtual environment):
+
+```
 pip install -r requirements.txt
+```
+
+Launch the Streamlit app:
+
+```
 streamlit run streamlit_app.py
+```
 
+## Development Milestones
 
+This project was developed through a series of key milestones:
 
-🚀 Development Milestones
-Milestone	Description
-1️⃣ Data Preparation & Setup	Downloaded and converted VinDr-CXR DICOMs to PNG/JPEG; converted annotations to YOLO format.
-2️⃣ Model Training & Evaluation	Trained baseline classification (ResNet-50) and detection (YOLOv8) models.
-3️⃣ Optimization & Visualization	Applied transfer learning, augmentations, and Grad-CAM interpretability.
-4️⃣ Deployment	Combined models in a unified Streamlit dashboard and deployed the web app.
+- **Milestone 1: Data Preprocessing & Setup:** Processed and cleaned distinct chest X-ray datasets, converting annotations to a unified format.
+- **Milestone 2: Model Training & Experimentation:** Trained baseline classification (ResNet-50) and detection (YOLOv8) models. Applied transfer learning, augmentations, and Grad-CAM interpretability.
+- **Milestone 3: Application Development:** Built the core Streamlit application, integrating the best-performing classifier and detectors.
+- **Milestone 4: Final Polish & Deployment:** Refined the UI/UX, added professional features like Grad-CAM and downloadable reports, and deployed the final application to Streamlit Community Cloud.
+
+(Placeholder for additional photos or screenshots - add your images here to illustrate milestones or app features)
