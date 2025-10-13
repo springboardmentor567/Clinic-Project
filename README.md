@@ -14,10 +14,6 @@ Built with **Python**, **PyTorch**, and **Streamlit**, it provides an intuitive 
 
 🔗 [**Open Live Application Here →**](https://infosys-project-awctidx2cpngvabdrxdq8k.streamlit.app/)
 
-| Application Home | Detection Output |
-|------------------|------------------|
-| ![Home Screenshot](assets/home_screenshot.png) | ![Detection Screenshot](assets/prediction_screenshot.png) |
-
 ---
 
 ## 🧠 About the Project
@@ -67,4 +63,67 @@ The project follows a **three-stage process**:
 ---
 
 ## 🗂️ Project Structure
+
+lung_detection/
+│
+├── streamlit_app.py # Main Streamlit UI script
+├── /models/ # Trained YOLOv8 / ResNet weights
+├── /src/ # Helper modules and utility functions
+├── /data/ # Processed dataset or samples
+├── /assets/ # Images, Grad-CAMs, screenshots
+├── /scripts/ # Model training and annotation conversion
+├── requirements.txt # Dependencies
+└── .streamlit/config.toml # App theme configuration
+
+---
+
+## ⚙️ Setup Instructions
+
+### Clone the repository:
+```bash
+git clone https://github.com/Ektajoge55/lung_detection.git
+cd lung_detection
+Install dependencies (preferably in a virtual environment):
+pip install -r requirements.txt
+
+Launch the Streamlit app:
+streamlit run streamlit_app.py
+
+
+Then open the local URL displayed in your terminal or
+View Live App Here →
+
+🚀 Development Milestones
+Milestone	Description
+1️⃣ Data Preparation & Setup	Downloaded and converted VinDr-CXR DICOMs to PNG/JPEG; converted annotations to YOLO format.
+2️⃣ Model Training & Evaluation	Trained baseline classification (ResNet-50) and detection (YOLOv8) models.
+3️⃣ Optimization & Visualization	Applied transfer learning, augmentations, and Grad-CAM interpretability.
+4️⃣ Deployment	Combined models in a unified Streamlit dashboard and deployed the web app.
+📊 Results & Insights
+
+Achieved strong baseline accuracy on VinDr-CXR subsets.
+
+Effective localization of common abnormalities such as opacity, infiltration, and nodules.
+
+Grad-CAM outputs align well with expected regions of interest.
+
+Grad-CAM Example	YOLOv8 Detection
+
+	
+🌱 Future Enhancements
+
+Multi-class disease classification
+
+Integration with lung segmentation models
+
+Model explainability dashboard
+
+Batch prediction and automated reporting
+
+👩‍💻 Developed By
+
+Ekta Joge
+🔗 Live App
+ | GitHub Repository
+
 
