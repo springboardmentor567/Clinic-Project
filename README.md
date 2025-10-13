@@ -77,21 +77,20 @@ lung_detection/
 
 ---
 
+
+
+---
+
 ## ⚙️ Setup Instructions
 
-### Clone the repository:
+### Clone the repository
 ```bash
 git clone https://github.com/Ektajoge55/lung_detection.git
 cd lung_detection
-Install dependencies (preferably in a virtual environment):
 pip install -r requirements.txt
-
-Launch the Streamlit app:
 streamlit run streamlit_app.py
 
 
-Then open the local URL displayed in your terminal or
-View Live App Here →
 
 🚀 Development Milestones
 Milestone	Description
@@ -99,31 +98,3 @@ Milestone	Description
 2️⃣ Model Training & Evaluation	Trained baseline classification (ResNet-50) and detection (YOLOv8) models.
 3️⃣ Optimization & Visualization	Applied transfer learning, augmentations, and Grad-CAM interpretability.
 4️⃣ Deployment	Combined models in a unified Streamlit dashboard and deployed the web app.
-📊 Results & Insights
-
-Achieved strong baseline accuracy on VinDr-CXR subsets.
-
-Effective localization of common abnormalities such as opacity, infiltration, and nodules.
-
-Grad-CAM outputs align well with expected regions of interest.
-
-Grad-CAM Example	YOLOv8 Detection
-
-	
-🌱 Future Enhancements
-
-Multi-class disease classification
-
-Integration with lung segmentation models
-
-Model explainability dashboard
-
-Batch prediction and automated reporting
-
-👩‍💻 Developed By
-
-Ekta Joge
-🔗 Live App
- | GitHub Repository
-
-
