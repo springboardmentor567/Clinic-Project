@@ -1,173 +1,240 @@
+# -*- coding: utf-8 -*-
+# app.py — CliniScan: Chest X-Ray Classification + Grad-CAM
+
 import streamlit as st
 import torch
-import numpy as np
+import torch.nn as nn
+from torchvision import transforms, models
 from PIL import Image
-from torchvision import transforms
-import base64
+import numpy as np
+import io
+import cv2
+import pandas as pd
+import os
+import tempfile
+import plotly.express as px  # ✅ For prettier charts
 
-from pytorch_grad_cam import GradCAM
-from pytorch_grad_cam.utils.image import show_cam_on_image
-from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+# Optional Grad-CAM imports
+try:
+    from pytorch_grad_cam import GradCAM
+    from pytorch_grad_cam.utils.image import show_cam_on_image
+    from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+    GRADCAM_AVAILABLE = True
+except Exception as e:
+    GRADCAM_AVAILABLE = False
+    gradcam_import_error = e
 
-# Import the model definition from model.py
-from model import ResNetClassifier
+# -----------------------
+# Utilities: DICOM -> PIL
+# -----------------------
+import pydicom
+from io import BytesIO
 
-# --- Configuration ---
-MODEL_PATH = "model.pth"
-NUM_CLASSES = 2
-CLASS_NAMES = ["Normal", "Pneumonia"]
-LOGO_PATH = "assets/logo.jpg"
-
-# --- Helper Functions ---
-
-@st.cache_data
-def get_base64_of_bin_file(bin_file):
-    """Encodes a binary file to base64 to embed in HTML."""
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def create_html_confidence_bar(probabilities):
-    """
-    Creates a robust, pure HTML/CSS confidence bar.
-    This avoids Matplotlib rendering issues.
-    """
-    predicted_class_index = np.argmax(probabilities.numpy())
-    confidence = probabilities[predicted_class_index].item() * 100
-    
-    # Determine color based on prediction
-    main_color = '#4CAF50' if predicted_class_index == 0 else '#F44336' # Green for Normal, Red for Pneumonia
-    
-    # Simplified HTML structure for the bar
-    bar_html = f"""
-    <div style="background-color: #262730; border-radius: 5px; height: 30px; width: 100%; padding: 0;">
-        <div style="background-color: {main_color}; width: {confidence}%; border-radius: 5px; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
-            {confidence:.2f}%
-        </div>
-    </div>
-    """
-    return bar_html
-
-# --- Core Functions ---
-
-@st.cache_resource
-def load_model(model_path, num_classes):
-    """Loads the trained PyTorch model."""
-    model = ResNetClassifier(num_classes=num_classes)
+def dicom_bytes_to_pil(dcm_bytes):
+    """Convert DICOM bytes to a PIL.Image (RGB)."""
     try:
-        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-    except Exception:
-        pass # A warning is shown in the main UI if the model fails to load.
-    model.eval()
-    return model
+        ds = pydicom.dcmread(BytesIO(dcm_bytes))
+        arr = ds.pixel_array
+        arr_norm = cv2.normalize(arr, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
+        if arr_norm.ndim == 2:
+            img = Image.fromarray(arr_norm).convert("RGB")
+        else:
+            img = Image.fromarray(arr_norm).convert("RGB")
+        return img
+    except Exception as e:
+        raise RuntimeError(f"Failed to parse DICOM: {e}")
 
-def preprocess_image(image):
-    """Applies the necessary transformations to the uploaded image."""
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
-    return transform(image).unsqueeze(0)
+# -----------------------
+# ResNet Classifier
+# -----------------------
+from torchvision.models import resnet18
+try:
+    from torchvision.models import ResNet18_Weights
+    RESNET_WEIGHTS = ResNet18_Weights.DEFAULT
+except Exception:
+    RESNET_WEIGHTS = None
 
-def get_grad_cam(model, input_tensor, rgb_img, pred_class_index):
-    """Generates and overlays a Grad-CAM heatmap on the image."""
-    target_layers = [model.model.layer4[-1]]
-    cam = GradCAM(model=model, target_layers=target_layers)
-    targets = [ClassifierOutputTarget(pred_class_index)]
-    grayscale_cam = cam(input_tensor=input_tensor, targets=targets)[0, :]
-    visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)
-    return visualization
+class ResNetClassifier(nn.Module):
+    def __init__(self, num_classes=2):
+        super(ResNetClassifier, self).__init__()
+        try:
+            if RESNET_WEIGHTS is not None:
+                self.model = resnet18(weights=RESNET_WEIGHTS)
+            else:
+                self.model = resnet18(pretrained=True)
+        except Exception:
+            self.model = resnet18(pretrained=True)
+        num_ftrs = self.model.fc.in_features
+        self.model.fc = nn.Linear(num_ftrs, num_classes)
 
-# --- Main Application UI ---
-st.set_page_config(page_title="CliniScan", page_icon="🩻", layout="wide")
+    def forward(self, x):
+        return self.model(x)
 
-# Custom CSS for the UI
-st.markdown("""
+# -----------------------
+# Model loading helper
+# -----------------------
+@st.cache_resource
+def load_model_from_path(model_path=None, num_classes=2):
+    model = ResNetClassifier(num_classes=num_classes)
+    if model_path:
+        try:
+            sd = torch.load(model_path, map_location="cpu")
+            if isinstance(sd, dict):
+                model.load_state_dict(sd)
+            else:
+                model = sd
+            st.success("✅ model.pth loaded.")
+            model.eval()
+            return model
+        except Exception as e:
+            st.warning(f"Could not load model.pth: {e}")
+            st.info("Falling back to pretrained ResNet18.")
+    try:
+        if RESNET_WEIGHTS is not None:
+            base = resnet18(weights=RESNET_WEIGHTS)
+        else:
+            base = resnet18(pretrained=True)
+        base.fc = nn.Linear(base.fc.in_features, num_classes)
+        st.info("Using fallback ResNet18 (ImageNet weights).")
+        base.eval()
+        return base
+    except Exception as e:
+        raise RuntimeError(f"Failed to create model: {e}")
+
+# -----------------------
+# Preprocessing
+# -----------------------
+from torchvision import transforms as T
+transform = T.Compose([
+    T.Resize((224, 224)),
+    T.ToTensor(),
+    T.Normalize(mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225])
+])
+
+# -----------------------
+# Streamlit UI
+# -----------------------
+st.set_page_config(page_title="CliniScan — Chest X-Ray (Grad-CAM)", layout="wide")
+
+# ✅ Custom header styling
+st.markdown(
+    """
     <style>
-    .block-container {
-        padding: 2rem 3rem 2rem 3rem;
+    .big-title {
+        font-size:36px !important;
+        font-weight:bold;
+        color:#00BFFF;
+        text-align:center;
     }
-    #MainMenu, footer, .stDeployButton { display: none; }
-    .stApp > header { background-color: transparent; }
-    .info-box {
-        background-color: #1c4e80; color: white; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0; text-align: center;
-    }
-    .results-container {
-        border: 1px solid #262730; border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem;
-    }
-    [data-testid="stMetric"] {
-        background-color: #262730; border-radius: 0.5rem; padding: 1rem;
+    .footer {
+        font-size:14px;
+        text-align:center;
+        color:gray;
+        margin-top:50px;
     }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
+st.markdown('<p class="big-title">🩻 CliniScan — Chest X-Ray Classification + Grad-CAM</p>', unsafe_allow_html=True)
 
-# --- Header ---
-try:
-    logo_base64 = get_base64_of_bin_file(LOGO_PATH)
-    st.markdown(f"""
-        <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-            <img src="data:image/png;base64,{logo_base64}" width="70" style="margin-right: 20px;">
-            <h1 style="margin: 0;">CliniScan: Lung Abnormality Detection</h1>
-        </div>
-        """, unsafe_allow_html=True)
-except FileNotFoundError:
-    st.error(f"Logo file not found at '{LOGO_PATH}'.")
-    st.header("CliniScan: Lung Abnormality Detection")
+with st.sidebar:
+    st.image("https://streamlit.io/images/brand/streamlit-logo-primary-colormark-darktext.png", width=120)
+    st.markdown("### ⚙️ Options")
+    num_classes = st.number_input("Number of classes (final layer)", value=2, min_value=2, max_value=20)
+    upload_model = st.file_uploader("Upload model.pth (optional)", type=["pt", "pth"])
+    show_gradcam = st.checkbox("Enable Grad-CAM visualization", value=True)
+    show_probs = st.checkbox("Show class probabilities", value=True)
 
-# --- Description ---
-st.markdown('<div class="info-box">Upload a chest X-ray to get a prediction for Normal vs. Pneumonia.</div>', unsafe_allow_html=True)
+# Handle uploaded model
+model_path = None
+if upload_model is not None:
+    tfile = tempfile.NamedTemporaryFile(delete=False, suffix=".pth")
+    tfile.write(upload_model.getvalue())
+    tfile.flush()
+    model_path = tfile.name
 
-# --- Load Model and Check Status ---
-model = load_model(MODEL_PATH, NUM_CLASSES)
-model_loaded = any(p.requires_grad for p in model.parameters())
-if not model_loaded:
-    st.error("Model file 'model.pth' not found or is invalid. The app is in demonstration mode.")
+model = load_model_from_path(model_path=model_path, num_classes=int(num_classes))
 
-# --- Main App Logic ---
-st.subheader("1. Upload Chest X-Ray Image")
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-
-if uploaded_file is not None:
+# Image uploader
+uploaded = st.file_uploader("📤 Upload an X-ray image or DICOM (.dcm)", type=["png","jpg","jpeg","dcm"])
+if uploaded is None:
+    st.info("Upload a chest X-ray image (jpg/png) or a DICOM (.dcm) file to run prediction.")
+else:
     try:
-        image = Image.open(uploaded_file).convert("RGB")
-        input_tensor = preprocess_image(image)
-        rgb_img_for_display = np.array(image.resize((224, 224))) / 255.0
+        filename = uploaded.name.lower()
+        if filename.endswith(".dcm"):
+            img = dicom_bytes_to_pil(uploaded.getvalue())
+        else:
+            img = Image.open(io.BytesIO(uploaded.getvalue())).convert("RGB")
 
+        # Preprocess and predict
+        input_tensor = transform(img).unsqueeze(0)
         with torch.no_grad():
             outputs = model(input_tensor)
-            probabilities = torch.softmax(outputs, dim=1)[0]
-            predicted_class_index = torch.argmax(probabilities).item()
-            confidence = probabilities[predicted_class_index].item()
-            predicted_class_name = CLASS_NAMES[predicted_class_index]
+            probs = torch.softmax(outputs, dim=1)[0]
+            pred_class = torch.argmax(probs).item()
 
-        # --- Display Results ---
-        st.subheader("2. Analysis Results")
-        with st.container():
-            st.markdown('<div class="results-container">', unsafe_allow_html=True)
-            col1, col2 = st.columns(2)
-            col1.metric(label="Predicted Class", value=predicted_class_name)
-            col2.metric(label="Confidence", value=f"{confidence:.2%}")
-            
-            # Display the robust HTML confidence bar
-            st.markdown(create_html_confidence_bar(probabilities), unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+        class_names = [f"Class_{i}" for i in range(int(num_classes))]
+        if int(num_classes) == 2:
+            class_names = ["Normal","Pneumonia"]
 
-        st.subheader("3. Explainability with Grad-CAM")
-        grad_cam_image = get_grad_cam(model, input_tensor, rgb_img_for_display, predicted_class_index)
-        
-        col_orig, col_cam = st.columns(2)
-        col_orig.image(image, caption="Original X-Ray", use_container_width=True)
-        col_cam.image(grad_cam_image, caption=f"Grad-CAM Heatmap for '{predicted_class_name}'", use_container_width=True)
+        if show_probs:
+            st.subheader("📊 Prediction")
+            st.write(f"**{class_names[pred_class]}** — {probs[pred_class].item()*100:.2f}% confidence")
+
+            chart_data = pd.DataFrame({
+                "Class": class_names,
+                "Probability": [float(probs[i].item()) for i in range(len(probs))]
+            })
+
+            fig = px.bar(
+                chart_data,
+                x="Class",
+                y="Probability",
+                color="Class",
+                text="Probability",
+                color_discrete_sequence=["#2ecc71", "#e74c3c"]
+            )
+            fig.update_traces(texttemplate='%{text:.2%}', textposition='outside')
+            fig.update_layout(yaxis=dict(range=[0,1]))
+            st.plotly_chart(fig, use_container_width=True)
+
+        # -----------------------
+        # Grad-CAM Visualization
+        # -----------------------
+        if show_gradcam:
+            if not GRADCAM_AVAILABLE:
+                st.error("pytorch-grad-cam is not installed.")
+                st.exception(gradcam_import_error)
+            else:
+                try:
+                    if hasattr(model, "model"):  
+                        target_layers = [model.model.layer4[-1]]
+                    else:
+                        target_layers = [model.layer4[-1]]
+
+                    cam = GradCAM(model=model, target_layers=target_layers)
+
+                    rgb_img = np.array(img.resize((224,224))) / 255.0
+                    grayscale_cam = cam(input_tensor=input_tensor,
+                                        targets=[ClassifierOutputTarget(pred_class)])[0]
+
+                    visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)
+
+                    st.subheader("🔥 Grad-CAM")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.image(img, caption="Original X-ray", width=350)
+                    with col2:
+                        st.image(visualization, caption="Grad-CAM", width=350)
+
+                except Exception as e:
+                    st.error(f"Grad-CAM failed: {e}")
+
+        # ✅ Footer
+        st.markdown('<p class="footer">Made this using Streamlit & PyTorch</p>', unsafe_allow_html=True)
 
     except Exception as e:
-        st.error(f"An error occurred during processing: {e}")
-else:
-    st.info("Awaiting image upload to begin analysis.")
-
-# --- Sidebar ---
-st.sidebar.title("About CliniScan")
-st.sidebar.info("This app uses a ResNet18 model to classify chest X-rays. Grad-CAM visualizes the areas the model focused on for its prediction.")
-st.sidebar.markdown("**Disclaimer:** This tool is for educational purposes only and is not a substitute for professional medical advice.")
-st.sidebar.markdown("---")
-st.sidebar.markdown("Developed by: Shambhavi Singh")
+        st.error(f"Failed to process uploaded file: {e}")
