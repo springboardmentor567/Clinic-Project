@@ -2,6 +2,12 @@
 
 This project focuses on detecting **Pneumonia** from chest X-ray images using a **ResNet18 convolutional neural network** integrated with a **Streamlit web interface**. The application supports both single and batch image inference and provides Grad-CAM visualizations for interpretability.
 
+
+
+https://github.com/user-attachments/assets/ee1d42bf-db50-4aa3-8dcb-742835c9cf99
+
+
+
 ## Features
 - **Classification:** Predicts whether an uploaded X-ray image is Normal or Pneumonia.
 - **Confidence Metrics:** Displays class probabilities and confidence bars.
@@ -69,6 +75,7 @@ python train.py
 ```
 - Dataset must be placed in the path `data/Images/{train,val,test}/{NORMAL,PNEUMONIA}`.
 - Hyperparameters such as learning rate, epochs, or device can be adjusted within `train.py`.
+
 
 
 
