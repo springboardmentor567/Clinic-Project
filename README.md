@@ -1,4 +1,4 @@
-# Chest X-Ray AI Analysis Platform: Detection and Classification
+# CliniScan: Lung-Abnormality Classificaton & Detection on Chest X-rays
 
 This project demonstrates two distinct but complementary approaches for analyzing Chest X-ray (CXR) images using state-of-the-art Deep Learning models: **Object Detection** (YOLOv8) to localize abnormalities and **Multi-Label Classification** (ResNet50) to identify their presence.
 
