@@ -8,9 +8,11 @@ The application is deployed and publicly accessible. Click the link below to int
 
 [Open in Streamlit](https://infosys-project-awctidx2cpngvabdrxdq8k.streamlit.app/)
 
-(Placeholder for screenshot of the app homepage - add your photo here)
+<img width="1893" height="837" alt="Screenshot 2025-10-13 203502" src="https://github.com/user-attachments/assets/267be7f8-9a5c-4669-9299-6a481ba92cf6" />
 
-(Placeholder for video walkthrough - add your video here demonstrating the app's features and functionality)
+
+https://github.com/user-attachments/assets/d2164893-43ab-427e-ae53-4d3dea62b537
+
 
 ## Table of Contents
 
@@ -101,3 +103,4 @@ This project was developed through a series of key milestones:
 - **Milestone 4: Final Polish & Deployment:** Refined the UI/UX, added professional features like Grad-CAM and downloadable reports, and deployed the final application to Streamlit Community Cloud.
 
 (Placeholder for additional photos or screenshots - add your images here to illustrate milestones or app features)
+
