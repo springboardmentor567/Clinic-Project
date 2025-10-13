@@ -1,11 +1,31 @@
-streamlit
+# Core scientific libraries
+numpy
+pandas
+matplotlib
+seaborn
+
+# PyTorch + vision utilities
 torch
 torchvision
-numpy
-opencv-python-headless
-Pillow
-matplotlib
-grad-cam         
+torchaudio
+
+# Imaging
+opencv-python
+pillow
 pydicom
-pandas
+
+# Grad-CAM (install from GitHub to support Python 3.10+)
+git+https://github.com/jacobgil/pytorch-grad-cam.git
+
+# Deep learning models (YOLOv8, etc.)
 ultralytics
+
+# Streamlit for deployment
+streamlit
+
+# Optional: Ngrok if you want tunneling from Colab
+pyngrok
+
+# Utilities
+scikit-learn
+plotly
