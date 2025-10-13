@@ -36,11 +36,11 @@ The goal is to **classify** an entire CXR image to determine the **presence or a
 
 ---
 
-## 🚀 Live Demo
+##  Live Demo
 
 You can test the unified AI tool directly in your browser. The application hosts both the YOLOv8 Detection model and the ResNet Classification model.
 
-**Application Link:** **[INSERT LIVE APP LINK HERE (e.g., Streamlit Share URL or HF Spaces URL)]**
+**Application Link:** **[https://4i88wodzyet7lwnxewfw9a.streamlit.app]**
 
 ---
 
@@ -103,6 +103,25 @@ The **`app.py`** script serves as the unified interface, using Streamlit Tabs to
 
 ## Application Snapshots
 
-The application uses tabs to cleanly separate the two functionalities. These images illustrate the Object Detection tab (YOLOv8):
+The application uses tabs to cleanly separate the two functionalities. 
+
+These images illustrate the Classification tab (ResNet50):
+
+![CliniScan: Lung-Abnormality Analysis_page-0001](https://github.com/user-attachments/assets/5bbf456d-a573-4485-8f6e-0f49dcaa6aed)
+
+![CliniScan: Lung-Abnormality Analysis_page-0002](https://github.com/user-attachments/assets/8c24ddf7-9256-4d0e-9654-50f874119b5d)
+
+These images illustrate the Detection tab (YOLOv8):
+
+![CliniScan_page-0001](https://github.com/user-attachments/assets/defb1e94-4582-41da-80b2-81d690630a0e)
+
+![CliniScan_page-0002](https://github.com/user-attachments/assets/c9b98e7a-4695-47d7-b7e9-366c4acc9cc9)
+
+![CliniScan_page-0003](https://github.com/user-attachments/assets/4b68c5e5-d6e1-42f1-a107-2b2f7ce09593)
+
+
+
+
+
 
 
