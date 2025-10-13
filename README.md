@@ -102,5 +102,5 @@ This project was developed through a series of key milestones:
 - **Milestone 3: Application Development:** Built the core Streamlit application, integrating the best-performing classifier and detectors.
 - **Milestone 4: Final Polish & Deployment:** Refined the UI/UX, added professional features like Grad-CAM and downloadable reports, and deployed the final application to Streamlit Community Cloud.
 
-(Placeholder for additional photos or screenshots - add your images here to illustrate milestones or app features)
+
 
