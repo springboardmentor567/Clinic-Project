@@ -1,0 +1,12 @@
+streamlit>=1.24
+torch>=2.0
+torchvision>=0.15
+pillow
+numpy
+pandas
+plotly
+pyngrok
+pydicom
+opencv-python-headless
+# Grad-CAM: install from git if PyPI issues with Python version
+# git+https://github.com/jacobgil/pytorch-grad-cam.git
