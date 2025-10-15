@@ -1,0 +1,12 @@
+streamlit==1.28.0
+ultralytics==8.0.112
+opencv-python-headless==4.7.0.72
+numpy==1.25.2
+pydicom>=2.4.4
+Pillow==10.0.1
+matplotlib==3.7.2
+
+# Fix missing distutils and build dependencies
+setuptools>=65.0.0
+wheel
+distro
