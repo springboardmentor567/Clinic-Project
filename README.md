@@ -1,4 +1,4 @@
-# CliniScan: Lung-Abnormality Classificaton & Detection on Chest X-rays
+# CliniScan: Lung-Abnormality Detection on Chest X-rays
 
 This project demonstrates two distinct but complementary approaches for analyzing Chest X-ray (CXR) images using state-of-the-art Deep Learning models: **Object Detection** (YOLOv8) to localize abnormalities and **Multi-Label Classification** (ResNet50) to identify their presence.
 
@@ -37,6 +37,12 @@ The goal is to **classify** an entire CXR image to determine the **presence or a
 ---
 
 ##  Live Demo
+
+
+https://github.com/user-attachments/assets/1619c1f4-0cc0-4314-95d8-7377e4d84655
+
+
+
 
 You can test the unified AI tool directly in your browser. The application hosts both the YOLOv8 Detection model and the ResNet Classification model.
 
