@@ -1,4 +1,4 @@
-# 🫁 CliniScan: AI Lung Abnormality Detection
+# 🫁 CliniScan: Lung pneumonia Detection
 
 <div align="center">
 
