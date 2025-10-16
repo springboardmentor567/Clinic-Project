@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-*.pth
-*.pt
-.env
-.ipynb_checkpoints/
-.vscode/
-.DS_Store
-__MACOSX
