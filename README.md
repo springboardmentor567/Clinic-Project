@@ -8,7 +8,9 @@ streamlit torch & torchvision pydicom opencv-python-headless pandas To install t
 
 pip install -r requirements.txt How to run the script 1-Clone the repository to your local machine:
 
-https://github.com/Jasmin-IT/CliniScan-Lung-Abnormality-Detection-on-Chest-X-rays.git cd CliniScan 2-Install the prerequisites:
+(https://github.com/springboardmentor567/Clinic-Project/tree/yunis_clini_scan_) 
+
+cd CliniScan 2-Install the prerequisites:
 
 pip install -r requirements.txt 3-Run the Streamlit web application:
 
