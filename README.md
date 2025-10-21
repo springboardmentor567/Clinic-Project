@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/1619c1f4-0cc0-4314-95d8-7377e4d84655
 
 
 
-You can test the unified AI tool directly in your browser. The application hosts both the YOLOv8 Detection model and the ResNet Classification model.
+
 
 
 
