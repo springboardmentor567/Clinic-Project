@@ -39,7 +39,8 @@ The goal is to **classify** an entire CXR image to determine the **presence or a
 ##  Live Demo
 
 
-https://github.com/user-attachments/assets/1619c1f4-0cc0-4314-95d8-7377e4d84655
+https://github.com/user-attachments/assets/f431019c-7f03-4c69-9061-32e9c3ebe458
+
 
 
 
