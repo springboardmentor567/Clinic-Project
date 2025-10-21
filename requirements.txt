@@ -1,32 +1,12 @@
-# Core ML + DL
+streamlit
 torch
 torchvision
 torchaudio
-
-# EfficientNet for classification
-efficientnet-pytorch
-
-# YOLOv8 for detection
-ultralytics
-
-# Model serving (export & inference)
-onnx
-onnxruntime
-torch-tensorrt
-tensorflow   # if you want to try TF SavedModel export
-
-# Utilities
-pandas
+tensorflow
 numpy
 pillow
-scikit-learn
-
-# Visualization + Explainability
-matplotlib
-seaborn
-grad-cam
-plotly
-
-# Deployment
-streamlit
+opencv-python
+pandas
+ultralytics
 gdown
+plotly
